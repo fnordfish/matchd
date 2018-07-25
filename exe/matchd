@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require "pp"
+require "rubygems"
+require "matchd/cli"
+
+Matchd::CLI::Main.start(ARGV)

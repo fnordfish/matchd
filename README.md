@@ -1,0 +1,423 @@
+# Matchd
+
+Matchd is a DNS server which can be configured via YAML files.
+
+Like it's example [`RubyDNS`](https://github.com/socketry/rubydns), it uses a pattern matching rule model  but does not require you to write any ruby.
+
+**This is work in progress and not yet released. I will break things all the time.**
+
+## Table of Contents
+
+- [Matchd](#matchd)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Intended use](#intended-use)
+  - [Usage](#usage)
+  - [Configure the Server/Daemon (`config.yml`)](#configure-the-serverdaemon-configyml)
+  - [Configure the Rules registry (`registry.yml`)](#configure-the-rules-registry-registryyml)
+    - [Matching the hostname](#matching-the-hostname)
+    - [Matching the resource_class](#matching-the-resourceclass)
+    - [respond](#respond)
+      - [`A`](#a)
+      - [`AAAA`](#aaaa)
+      - [`CNAME`](#cname)
+      - [`MX`](#mx)
+      - [`NS`](#ns)
+      - [`PTR`](#ptr)
+      - [`SOA`](#soa)
+      - [`SRV`](#srv)
+      - [`TXT`](#txt)
+    - [append](#append)
+    - [passthrough](#passthrough)
+    - [fail](#fail)
+  - [Using as a library](#using-as-a-library)
+  - [Development](#development)
+  - [Contributing](#contributing)
+
+## Installation
+
+    $ gem install matchd
+
+## Intended use
+
+Although it's probably possible to use as a public/private DNS, Matchd is intended to be used in a development environment where using "localhost" or "editing /etc/hosts" isn't feasible anymore. Such as:
+
+- large list of sub-domains (use regular expressions to match them all)
+- DNS record types like TXT, MX, SRV etc. for integration testing or development
+
+## Usage
+
+Print available commands and sub-commands:
+
+    $ matchd help
+    $ matchd help start          # to display details for a specific command
+    $ matchd help config         # ... or sub-command
+    $ matchd config help setup   # prints details for a specific sub-commands command
+
+
+Create the default configuration directory within your `$HOME`
+
+    $ matchd config setup
+
+- `.matchd`: This is also the home for log and pid files
+- `.matchd/config.yml`: Base configurations of the server
+- `.matchd/registry.yml`: The registry for all of your rules
+
+Please also see [`examples`](../examples/) for more.
+
+## Configure the Server/Daemon (`config.yml`)
+
+- `dot_dir`: Path to the daemons base directory. This is where log and pid files are written to.
+- `listen`: Collection of interface where the server will listen on.
+  This setting supports multiple formats:
+  - Array/Collection form:
+  ```yaml
+  listen:
+  - ["udp", "127.0.0.1", 15353]
+  ```
+  - Hash/Structure form:
+  ```yaml
+  listen:
+  - protocol: udp
+    ip: 127.0.0.1
+    port: 15353
+  ```
+  - URL form:
+  ```yaml
+  listen:
+  - "udp://127.0.0.1:15353"
+  ```
+- `resolver`: Collection of upstream resolvers for "passthrough" requests. (If a query could net been matched, we'll forward that request to this server)
+  Supports the same formats as `listen`:
+  - Array/Collection form:
+  ```yaml
+  resolver:
+  - ["udp", "1.1.1.1", 53]
+  ```
+  - Hash/Structure form:
+  ```yaml
+  resolver:
+  - protocol: udp
+    ip: 1.1.1.1
+    port: 53
+  ```
+  - URL form:
+  ```yaml
+  resolver:
+  - "udp://1.1.1.1:53"
+  ```
+  You can also default to your system settings (NOTE that this is a single value):
+  ```yaml
+  resolver: system
+  ```
+
+## Configure the Rules registry (`registry.yml`)
+
+This file uses a single key `rules` which lists all the rules. Each rule is a structure with three keys.
+
+```yaml
+- rules:
+  - match: ...          # String or Regexp
+    resource_class: ... # A IN::* resource record name
+    _action_: ...       # How to answer this match
+```
+
+The first two options, `match` and `resource_class` describe which query to match. The third describes how to respond and should be one of: `append_question`, `respond`, `passthrough` or `fail`.
+
+Rules will get evaluated top-to-bottom. Once a rule matches, it will get executed and processing stops.
+A match always considers the name _and_ resource class of the query.
+
+The query name can be matched against a specific string or regular expression.
+The query resource class can be matched against a single or a list of targets. When a list is used, any of the targets in the list will trigger.
+
+When no rule matches, the query will be forwarded to the configured resolvers (see `config.yml` and it's `resolver` key).
+
+### Matching the hostname
+
+To match against a specific name use the string notation.
+
+```yaml
+# This will only match where the requested domain is exactly `mydomain.dev`, sub-domains like `sub.mydomain.dev` will not match.
+match: mydomain.dev
+```
+
+To match all sub-domains, use a regular expression.
+
+```yaml
+# This will only match sub-domain queries like `sub.mydomain.dev` or `bus.mydomain.dev`, but not `mydomain.de`
+match: /^\w+\.mydomain\.dev$/
+# This will only match sub-domain queries like `sub.mydomain.dev` or `bus.mydomain.dev`, and also `mydomain.de`
+match: /(^\w+\.)?mydomain\.dev$/
+# This will also match any depth of sub-domain queries like `bus.sub.mydomain.dev`:
+match: /(^\w+\.)*mydomain\.dev$/
+```
+
+Under the hood, Matchd uses [ruby regular expressions](https://ruby-doc.org/core-2.5.1/Regexp.html).
+For the YAML configuration format only the `/.../` syntax is supported, optionally using the `m`, `x` and `i` modifiers.
+
+When using regular expressions, it's recommended to use `^` and `$` anchors to have better control over what you want to match. Also keep in mind, that you'll need to escape dots (`.` -> `\.`).
+
+### Matching the resource_class
+
+A single or a list of ARPA Internet specific resource record (RRs) names:
+`A`, `AAAA`, `ANY`, `CNAME`, `HINFO`, `LOC`, `MINFO`, `MX`, `NS`, `PTR`, `SOA`, `SRV`, `TXT`, `WKS`
+
+To give some most common samples:
+
+```yaml
+# IPv4 record
+resource_class: A
+# IPv6 record
+resource_class: AAAA
+# I'm funny:
+resource_class:
+  - TXT
+  - CNAME
+```
+
+### respond
+
+To let a rule respond, include the `respond` key.
+
+Supported response types are: `A`, `AAAA`, `CNAME`, `MX`, `NS`, `PTR`, `SOA`, `SRV`, `TXT`
+
+You can configure multiple responses per rule. Each rule has it's own configuration keys (see below) but they all support a common set of options:
+
+
+```yaml
+ttl: 86400                # The Time-To-Live of the record (default: 86400 seconds == 24h)
+name: "other.sample.dev." # The absolute DNS name (needs to end with a dot). Default is the question name.
+section: answer           # The answer section. One of "answer", "additional", "authority" (default: "answer")
+```
+
+To avoid clutter, there are some shortcuts when defining a rule:
+
+1. Omit the List for single responses
+2. Omit the Collection for responses that take only one argument
+3. Omit the responds `resource_class` when it's the same as the queries `resource_class`
+
+Example:
+
+One single value response:
+
+```yaml
+- match: sample.dev
+  resource_class: A
+  respond: 10.0.0.1
+
+# is the same as:
+- match: sample.dev
+  resource_class: A
+  respond:
+  - resource_class: A
+    ip: 10.0.0.1
+```
+
+Multiple single value responses:
+
+```yaml
+- match: sample.dev
+  resource_class: NS
+  respond:
+  - 'ns1.sample.dev.'
+  - 'ns2.sample.dev.'
+
+# is the same as:
+- match: sample.dev
+  resource_class: NS
+  respond:
+  - resource_class: NS
+    host: 'ns1.sample.dev.'
+  - resource_class: NS
+    host: 'ns2.sample.dev.'
+```
+
+#### `A`
+
+```yaml
+resource_class: A
+ip: "127.0.0.1"
+```
+
+#### `AAAA`
+
+```yaml
+resource_class: AAAA
+ip: "::1"
+```
+
+#### `CNAME`
+
+```yaml
+resource_class: CNAME
+alias: "sample.dev"
+```
+
+#### `MX`
+
+```yaml
+resource_class: MX
+preference: 10
+host: "mail.sample.dev"
+```
+
+#### `NS`
+
+```yaml
+resource_class: NS
+host: "ns1.sample.dev"
+```
+
+#### `PTR`
+
+```yaml
+resource_class: PTR
+host: "host1.sample.dev"
+```
+
+#### `SOA`
+
+```yaml
+resource_class: SOA
+mname: "ns1.sample.dev."       # master zone name
+rname: "admin.sample.dev."     # Responsible Name
+serial: "1533038712"           # Serial Number
+refresh: 1200                  # Refresh Time
+retry: 900                     # Retry Time
+expire: 3600000                # Maximum TTL / Expiry Time
+minimum_ttl: 172800            # Minimum TTL
+```
+
+#### `SRV`
+
+```yaml
+resource_class: SRV
+target: jabber
+priority: 10
+weight: 0
+port: 5269
+# To make this meaningful, we need to provide a name:
+name: "_xmpp-server._tcp.sample.dev"
+```
+
+#### `TXT`
+
+```yaml
+resource_class: TXT
+txt: "some-token=value"
+```
+
+### append
+
+Append the results of another query to the response.
+
+```yaml
+append_question: A
+# is the same as:
+append_question:
+- A
+```
+
+Append rules accept the same common options as Respond rules. The Response rules options will take precedence if configured.
+
+```yaml
+append_question:
+  ttl: 86400                # The Time-To-Live of the record (default: 86400 seconds == 24h)
+  name: "other.sample.dev." # The absolute DNS name (needs to end with a dot). Default is the question name.
+  section: answer           # The answer section. One of "answer", "additional", "authority" (default: "answer")
+  resource_class:
+    - A
+    - AAAA
+```
+
+Example:
+
+```yaml
+- match: dev.sample.dev
+  resource_class: ANY
+  append_question:
+    ttl: 86400
+    resource_class:
+    - A
+    - CNAME
+    - MX
+    - NS
+```
+
+### passthrough
+
+Query an upstream resolver and use its response.
+
+Takes the same parameters as the server config's `resolver`:
+
+```yaml
+# Mixing IPv4 and IPv6 in different formats:
+passthrough:
+  - ["udp", "1.1.1.1", 53]
+  - protocol: udp
+    ip: 1.0.0.1
+    port: 53
+  - "tcp://[2606:4700:4700::1111]:53"
+  - system
+
+# Shortcut, if you need only one:
+passthrough: system # or any other version above
+
+# Long format with added options
+passthrough:
+  force: true
+  resolver:
+  - ["udp", "1.1.1.1", 53]
+  - protocol: udp
+    ip: 1.0.0.1
+    port: 53
+  - "tcp://[2606:4700:4700::1111]:53"
+  - system
+```
+
+
+
+### fail
+
+Indicate an error processing the query.
+
+To cite `Async::DNS` list of list of the most commonly used errors:
+
+- `NoError`: No error occurred.
+- `FormErr`: The incoming data was not formatted correctly.
+- `ServFail`: The operation caused a server failure (internal error, etc).
+- `NXDomain`: Non-eXistant Domain (domain record does not exist).
+- `NotImp`: The operation requested is not implemented.
+- `Refused`: The operation was refused by the server.
+- `NotAuth`: The server is not authoritive for the zone.
+
+Note that the above values are all case __sensitive__!
+
+Example:
+
+```yaml
+- match: not-there.sample.dev
+  resource_class: A
+  fail: NXDomain
+
+# a catchall rule:
+- match: /^(\w+\.)?sample.dev$/
+  resource_class: A
+  respond: "127.0…0.1"
+```
+
+## Using as a library
+
+While Matchd is intended to be used as a demonizing CLI tool, you can use it as a library.
+
+TODO: Docs
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bin/rake install`. To release a new version, update the version number in `version.rb`, and then run `bin/rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/dotless/matchd.

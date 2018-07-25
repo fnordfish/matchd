@@ -1,0 +1,20 @@
+inherit_from:
+- https://relaxed.ruby.style/rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.2
+  Exclude:
+    - 'bin/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation

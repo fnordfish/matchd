@@ -1,0 +1,12 @@
+# This is a re-implementation of the RubyDNS sample "cname.rb" under
+# https://github.com/socketry/rubydns/blob/master/examples/cname.rb
+# by Samuel G. D. Williams. <http://www.codeotaku.com>
+#
+---
+version: 1
+rules:
+  - match: //
+    resource_class: A
+    respond:
+      resource_class: CNAME
+      alias: 'foo.bar'

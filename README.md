@@ -6,6 +6,10 @@ Like it's example [`RubyDNS`](https://github.com/socketry/rubydns), it uses a pa
 
 **This is work in progress and not yet released. I will break things all the time.**
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/9791617021f321155cb0/maintainability)](https://codeclimate.com/github/fnordfish/matchd/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9791617021f321155cb0/test_coverage)](https://codeclimate.com/github/fnordfish/matchd/test_coverage)
+[![Inline docs](https://inch-ci.org/github/fnordfish/matchd.svg?branch=master)](http://inch-ci.org/github/fnordfish/matchd)
+
 ## Table of Contents
 
 - [Matchd](#matchd)

@@ -1,0 +1,12 @@
+:dot_dir: "~/.matchd"
+:listen:
+- protocol: udp
+  ip: 127.0.0.1
+  port: 15353
+- protocol: udp
+  ip: "::1"
+  port: 15353
+:resolver:
+- "system"
+- "tcp://1.1.1.1:53"
+:registry_file: registry.yml

@@ -41,8 +41,8 @@ module Matchd
 
     def initialize(options)
       @raw = options
-      @match_name = options.fetch("match")
-      @match_resource_classes = Array(options.fetch("resource_class"))
+      @name = options.fetch("match")
+      @resource_classes = Array(options.fetch("resource_class"))
     end
     attr_reader :raw
 
@@ -87,12 +87,12 @@ module Matchd
 
     # @private
     def match_name
-      @_match_name ||= self.class.parse_match(@match_name)
+      @match_name ||= self.class.parse_match(@name)
     end
 
     # @private
     def match_resource_classes
-      @_match_resource_classes ||= self.class.parse_resource_class(@match_resource_classes)
+      @match_resource_classes ||= self.class.parse_resource_class(@resource_classes)
     end
 
     module Factory

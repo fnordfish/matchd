@@ -8,14 +8,12 @@ class Matchd::Rule::Passthrough < Matchd::Rule
     super
     opts = options.fetch("passthrough")
 
-    @passthrough_options = {}
-
-    if opts.is_a?(Hash) && options.key?("resolver")
+    if opts.is_a?(Hash) && opts.key?("resolver")
       @resolver = opts["resolver"]
-      @passthrough_options[:force] = opts["force"] if options.key?("force")
-      @passthrough_options[:name] = opts["name"] if options.key?("name")
+      @passthrough_options = extract_passthrough_options(opts)
     else
       @resolver = opts
+      @passthrough_options = {}
     end
   end
 
@@ -44,6 +42,14 @@ class Matchd::Rule::Passthrough < Matchd::Rule
       else
         server.logger.debug ";; Empty"
       end
+    end
+  end
+
+  private
+
+  def extract_passthrough_options(opts)
+    %w(force name).each_with_object do |key, o|
+      o[key.to_sym] = opts[key] if opts.key?(key)
     end
   end
 end

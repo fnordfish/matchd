@@ -38,12 +38,9 @@ module Matchd
     end
 
     def self.load(data, registry_file = nil)
-      rules =
-        if data.is_a?(Hash) && data.key?("rules")
-          data["rules"]
-        else
-          raise ParseError, registry_file
-        end
+      raise ParseError, registry_file unless data.is_a?(Hash) && data.key?("rules")
+
+      rules = data["rules"]
 
       new(rules ? parse(rules) : [])
     end

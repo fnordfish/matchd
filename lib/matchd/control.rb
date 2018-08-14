@@ -1,7 +1,12 @@
 require "daemons"
 
 module Matchd
+  # Controls the demonizing of a {Matchd::Server}
   class Control
+    def initialize(options = {})
+      @name = options.delete(:name, "matchd")
+    end
+
     def start(options = {})
       run! "start", ontop: options.fetch(:ontop, false)
     end
@@ -22,7 +27,7 @@ module Matchd
     # @private
     def run!(argv, options = {})
       run_options = { ARGV: Array(argv), **options, **daemon_opts }
-      Daemons.run_proc("matchd", run_options) do
+      Daemons.run_proc(@name, run_options) do
         require "matchd/server"
         Matchd::Server.new(*server_opts).run
       end

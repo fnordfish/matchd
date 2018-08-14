@@ -4,6 +4,7 @@ module Matchd
   autoload :Config,   "matchd/config"
   autoload :Control,  "matchd/control"
   autoload :Glue,     "matchd/glue"
+  autoload :Helpers,  "matchd/helpers"
   autoload :Registry, "matchd/registry"
   autoload :Response, "matchd/response"
   autoload :Rule,     "matchd/rule"

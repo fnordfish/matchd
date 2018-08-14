@@ -77,7 +77,7 @@ RSpec.describe Matchd::Registry do
       expect {
         registry_file = fixture_path("test_invalid_missing_rules.yml")
         described_class.load_file(registry_file)
-      }.to raise_error(Matchd::Registry::LoadError, /Missing 'rules' key.*test_invalid_missing_rules\.yml/)
+      }.to raise_error(Matchd::Registry::ParseError, /Missing 'rules' key.*test_invalid_missing_rules\.yml/)
     end
 
     specify "missing rules key" do
@@ -88,7 +88,7 @@ RSpec.describe Matchd::Registry do
             "other" => "nonesence"
           }
         )
-      }.to raise_error(Matchd::Registry::LoadError, /Missing 'rules' key/)
+      }.to raise_error(Matchd::Registry::ParseError, /Missing 'rules' key/)
     end
   end
 

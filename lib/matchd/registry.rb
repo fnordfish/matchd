@@ -9,6 +9,18 @@ module Matchd
 
     LoadError = Class.new(RuntimeError)
 
+    class ParseError < RuntimeError
+      def initialize(registry_file = nil)
+        @registry_file = registry_file
+      end
+
+      def message
+        msg = "Missing 'rules' key"
+        msg += " in registry file '#{@registry_file}'" if @registry_file
+        msg
+      end
+    end
+
     def initialize(rules)
       raise ArgumentError unless rules.is_a?(Enumerable)
       @rules = rules
@@ -30,16 +42,10 @@ module Matchd
         if data.is_a?(Hash) && data.key?("rules")
           data["rules"]
         else
-          msg = "Missing 'rules' key"
-          msg += "in registry file '#{registry_file}'" if registry_file
-          raise LoadError, msg
+          raise ParseError, registry_file
         end
 
-      if rules
-        new(parse(rules))
-      else
-        new([])
-      end
+      new(rules ? parse(rules) : [])
     end
 
     # Parses raw rule hash definitions (like those read from a YAML config) into

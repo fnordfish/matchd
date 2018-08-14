@@ -408,7 +408,7 @@ Example:
 # a catchall rule:
 - match: /^(\w+\.)?sample.dev$/
   resource_class: A
-  respond: "127.0…0.1"
+  respond: "127.0.0.1"
 ```
 
 ## Using as a library

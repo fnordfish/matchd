@@ -13,20 +13,20 @@ RSpec.describe Matchd::Helpers do
     end
 
     specify "nil value will get extracted" do
-      expect(Matchd::Helpers.extract_options(["nil"], input)).to eq({nil: nil})
+      expect(Matchd::Helpers.extract_options(["nil"], input)).to eq(nil: nil)
     end
 
     specify "keys will get symbolized" do
-      expect(Matchd::Helpers.extract_options(["foo"], input)).to eq({foo: "foo"})
+      expect(Matchd::Helpers.extract_options(["foo"], input)).to eq(foo: "foo")
     end
 
     specify "exact key lookup" do
       expect(Matchd::Helpers.extract_options(["bar"], input)).to eq({})
-      expect(Matchd::Helpers.extract_options([:bar], input)).to eq({bar: :bar})
+      expect(Matchd::Helpers.extract_options([:bar], input)).to eq(bar: :bar)
     end
 
     specify "keys will take new order" do
-      expect(Matchd::Helpers.extract_options([:bar, "foo"], input)).to eq({bar: :bar, foo: "foo"})
+      expect(Matchd::Helpers.extract_options([:bar, "foo"], input)).to eq(bar: :bar, foo: "foo")
     end
   end
 end

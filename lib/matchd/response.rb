@@ -44,6 +44,14 @@ module Matchd
     end
 
     module Factory
+      # Creates new instances of a {Matchd::Response} subclass. Which class is being used
+      # is defines via the {respond} or {fallback_resource_class} parameters.
+      #
+      # @param respond [Array<Hash>|Hash] One or multiple response configurations (See subclasses)
+      # @param fallback_resource_class [Array[String]|String] One or multiple ressource class names (like `"A"`, `"AAAA"`, `"MX"` etc)
+      #   defining which Resource subclass is being used if the {respond} doesn't include a `"resource_class"` configuration
+      #
+      # @return [Array<Matchd::Response>] Instances of {Matchd::Response} subclasses.
       def Response(respond, fallback_resource_class) # rubocop:disable Naming/MethodName
         respond = [respond] unless respond.is_a?(Array) # don't convert Hash to Array
         respond.flat_map do |r|

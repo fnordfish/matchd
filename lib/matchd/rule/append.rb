@@ -3,13 +3,13 @@ class Matchd::Rule::Append < Matchd::Rule
     super
     opts = options.fetch("append_question")
 
-    @transaction_options = Matchd::Helpers.extract_options(%w(ttl name section), options)
-    @append_questions =
-      if opts.is_a?(Hash)
-        Array(opts.fetch("resource_class"))
-      else
-        Array(opts)
-      end
+    if opts.is_a?(Hash)
+      @append_questions = Array(opts.fetch("resource_class"))
+      @transaction_options = Matchd::Helpers.extract_options(%w(ttl name section), opts)
+    else
+      @append_questions = Array(opts)
+      @transaction_options = {}
+    end
   end
 
   attr_reader :append_questions, :transaction_options

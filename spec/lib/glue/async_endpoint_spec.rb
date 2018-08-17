@@ -81,19 +81,52 @@ RSpec.describe Matchd::Glue::AsyncEndpoint do
   describe "URI string" do
     specify do
       expect(described_class.parse("udp://0.0.0.0:53")).to eq(
-        [["udp", "0.0.0.0", 53]]
+        [[:udp, "0.0.0.0", 53]]
       )
     end
 
     specify do
       expect(described_class.parse("tcp://0.0.0.0:53")).to eq(
-        [["tcp", "0.0.0.0", 53]]
+        [[:tcp, "0.0.0.0", 53]]
       )
     end
 
     specify do
       expect(described_class.parse(["udp://0.0.0.0:53", "tcp://0.0.0.0:53"])).to eq(
-        [["udp", "0.0.0.0", 53], ["tcp", "0.0.0.0", 53]]
+        [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
+      )
+    end
+  end
+
+  describe "All in one" do
+    specify do
+      expect(
+        described_class.parse(
+          [
+            "udp://0.0.0.1:53",
+            [:tcp, "0.0.0.2", 53],
+            { "protocol" => :udp, "ip" => "0.0.0.3", "port" => 53 }
+          ]
+        )
+      ).to eq(
+        [
+          [:udp, "0.0.0.1", 53],
+          [:tcp, "0.0.0.2", 53],
+          [:udp, "0.0.0.3", 53]
+        ]
+      )
+    end
+
+    specify do
+      expect(
+        described_class.parse(
+          ["udp://0.0.0.1:53", ["tcp", "0.0.0.2", 53]]
+        )
+      ).to eq(
+        [
+          [:udp, "0.0.0.1", 53],
+          [:tcp, "0.0.0.2", 53]
+        ]
       )
     end
   end

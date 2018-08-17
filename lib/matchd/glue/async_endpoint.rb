@@ -35,8 +35,7 @@ module Matchd::Glue
             if triplet = parse_array(args)
               [triplet]
             else
-              array_args, args = args.partition { |e| e.is_a?(Array) }
-              array_args.map { |e| parse_array(e) } + args.flat_map { |e| parse(e) }
+              args.flat_map { |e| parse(e) }
             end
           when Hash
             [parse_hash(args)]
@@ -57,7 +56,11 @@ module Matchd::Glue
       # and returns just the thing if all data is present
       def parse_array(args)
         args = args.compact
-        args if args.length == 3 && %w(udp tcp).include?(args[0].to_s)
+        if args.length == 3 && %w(udp tcp).include?(args[0].to_s)
+          args = args.clone
+          args[0] = args[0].to_sym
+          args
+        end
       end
 
       # @private
@@ -73,7 +76,7 @@ module Matchd::Glue
 
         return nil unless protocol && ip && port
 
-        [protocol, ip, port]
+        [protocol.to_sym, ip, port]
       end
 
       # @private
@@ -81,7 +84,7 @@ module Matchd::Glue
       # `"udp://0.0.0.0:53"` or `"tcp://0.0.0.0:53"`
       def parse_uri(args)
         uri = URI.parse(args)
-        protocol = uri.scheme
+        protocol = uri.scheme.to_sym
         ip       = uri.host
         port     = uri.port
 

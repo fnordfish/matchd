@@ -1,33 +1,21 @@
 module Matchd::Glue
   # Wrapper for allowing a more flexible way of defining interfaces for Asyc-*
-  class AsyncEndpoint
-    # Examples:
-    #
-    #   # classic triplet array
-    #   AsyncIntrface.new([:udp, "0.0.0.0", 53])
-    #   AsyncIntrface.new([[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]])
-    #
-    #   # Hash notation
-    #   AsyncIntrface.new({"protocol" => :udp, "ip" => "0.0.0.0", "port" => 53})
-    #   AsyncIntrface.new({protocol: :udp, ip: "0.0.0.0", port: 53})
-    #   AsyncIntrface.new([{protocol: :udp, ip: "0.0.0.0", port: 53}, {protocol: :tcp, ip: "0.0.0.0", port: 53}])
-    #
-    #   # URI strings
-    #   AsyncIntrface.new("udp://0.0.0.0:53")
-    #   AsyncIntrface.new(["udp://0.0.0.0:53", "tcp://0.0.0.0:53"])
-    def initialize(args)
-      endpoints = AsyncEndpoint.parse(args)
-
-      raise ArgementError if !endpoints || endpoints.empty?
-
-      @endpoints = endpoints
-    end
-
-    def to_a
-      @endpoints
-    end
-
+  module AsyncEndpoint
     class << self
+      # Examples:
+      #
+      #   # classic triplet array
+      #   AsyncIntrface.parse([:udp, "0.0.0.0", 53])
+      #   AsyncIntrface.parse([[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]])
+      #
+      #   # Hash notation
+      #   AsyncIntrface.parse({"protocol" => :udp, "ip" => "0.0.0.0", "port" => 53})
+      #   AsyncIntrface.parse({protocol: :udp, ip: "0.0.0.0", port: 53})
+      #   AsyncIntrface.parse([{protocol: :udp, ip: "0.0.0.0", port: 53}, {protocol: :tcp, ip: "0.0.0.0", port: 53}])
+      #
+      #   # URI strings
+      #   AsyncIntrface.parse("udp://0.0.0.0:53")
+      #   AsyncIntrface.parse(["udp://0.0.0.0:53", "tcp://0.0.0.0:53"])
       def parse(args)
         val =
           case args
@@ -49,6 +37,8 @@ module Matchd::Glue
 
         val.empty? ? nil : val
       end
+
+      private
 
       # @private
       # parses the classic triplet array notation

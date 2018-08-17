@@ -32,7 +32,7 @@ RSpec.describe Matchd::Rule::Respond do
 
   let(:server) { instance_double(Matchd::Server) }
   let(:transaction) { instance_double(Async::DNS::Transaction) }
-  let(:query_name) { "test.dev." }
+  let(:query_name) { "test.test." }
   let(:query_ressource) { Resolv::DNS::Resource::IN::A }
 
   it { expect(subject.responses).to eq(responses_config) }

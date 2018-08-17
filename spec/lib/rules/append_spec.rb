@@ -15,7 +15,7 @@ RSpec.describe Matchd::Rule::Append do
   subject { described_class.new(options) }
 
   let(:server) { instance_double(Matchd::Server) }
-  let(:name) { "example.dev" }
+  let(:name) { "example.test" }
   let(:resource_class) { Resolv::DNS::Resource::IN::ANY }
   let(:transaction) { instance_double(Async::DNS::Transaction, name: name) }
 

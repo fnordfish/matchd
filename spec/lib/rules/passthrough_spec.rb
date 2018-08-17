@@ -99,7 +99,7 @@ RSpec.describe Matchd::Rule::Passthrough do
 
   describe "#visit!" do
     let(:server) { instance_double(Matchd::Server) }
-    let(:name) { "example.dev" }
+    let(:name) { "example.test" }
     let(:resource_class) { Resolv::DNS::Resource::IN::A }
     let(:transaction) { instance_double(Async::DNS::Transaction) }
 

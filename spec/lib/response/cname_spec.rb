@@ -4,7 +4,7 @@ RSpec.describe Matchd::Response::CNAME do
   let(:transaction) { instance_double(Async::DNS::Transaction) }
 
   describe "call" do
-    let(:alias_name) { "sample.dev" }
+    let(:alias_name) { "sample.test" }
 
     before do
       expect(transaction).to receive(:add).with(
@@ -27,7 +27,7 @@ RSpec.describe Matchd::Response::CNAME do
   end
 
   context "with resource_options" do
-    include_examples "response resource_options", "alias" => "sample.dev"
+    include_examples "response resource_options", "alias" => "sample.test"
   end
 
   # TODO: Move this into the "validate" step

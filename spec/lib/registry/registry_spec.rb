@@ -20,19 +20,19 @@ RSpec.describe Matchd::Registry do
         },
         {
           class: Matchd::Rule::Respond,
-          match_name: /^(\w+\.)*mydomain\.dev$/,
+          match_name: /^(\w+\.)*mydomain\.test$/,
           match_resource_classes: [Resolv::DNS::Resource::IN::A],
           responses: "10.0.0.80"
         },
         {
           class: Matchd::Rule::Respond,
-          match_name: /^(\w+\.)*mydomain\.dev$/,
+          match_name: /^(\w+\.)*mydomain\.test$/,
           match_resource_classes: [Resolv::DNS::Resource::IN::AAAA],
           responses: "fe80::A:0:0:0050"
         },
         {
           class: Matchd::Rule::Respond,
-          match_name: "_sometxt.mydomain.dev",
+          match_name: "_sometxt.mydomain.test",
           match_resource_classes: [Resolv::DNS::Resource::IN::TXT],
           responses: { "txt" => "Located in a black hole=Likely to be eaten by a grue" }
         },

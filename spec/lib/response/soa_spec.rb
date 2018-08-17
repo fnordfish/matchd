@@ -14,8 +14,8 @@ RSpec.describe Matchd::Response::SOA do
     specify "hash initializer requires string keys" do
       described_class.
         new(
-          "mname" => "ns1.sample.dev.",
-          "rname" => "admin.sample.dev.",
+          "mname" => "ns1.sample.test.",
+          "rname" => "admin.sample.test.",
           "serial" => "1533038712",
           "refresh" => 1200,
           "retry" => 900,
@@ -31,8 +31,8 @@ RSpec.describe Matchd::Response::SOA do
       expect {
         described_class.
           new(
-            mname: "ns1.sample.dev.",
-            rname: "admin.sample.dev.",
+            mname: "ns1.sample.test.",
+            rname: "admin.sample.test.",
             serial: "1533038712",
             refresh: 1200,
             retry: 900,
@@ -45,8 +45,8 @@ RSpec.describe Matchd::Response::SOA do
 
   context "with resource_options" do
     include_examples "response resource_options",
-      "mname" => "ns1.sample.dev.",
-      "rname" => "admin.sample.dev.",
+      "mname" => "ns1.sample.test.",
+      "rname" => "admin.sample.test.",
       "serial" => "1533038712",
       "refresh" => 1200,
       "retry" => 900,

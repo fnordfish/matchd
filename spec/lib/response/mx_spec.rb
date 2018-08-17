@@ -15,7 +15,7 @@ RSpec.describe Matchd::Response::MX do
       described_class.
         new(
           "preference" => 10,
-          "host" => "mail.sample.dev"
+          "host" => "mail.sample.test"
         ).
         call(transaction)
     end
@@ -27,7 +27,7 @@ RSpec.describe Matchd::Response::MX do
         described_class.
           new(
             preference: 10,
-            host: "mail.sample.dev"
+            host: "mail.sample.test"
           )
       }.to raise_error(KeyError)
     end
@@ -35,7 +35,7 @@ RSpec.describe Matchd::Response::MX do
     specify "no flat initializer" do
       expect {
         described_class.
-          new("mail.sample.dev")
+          new("mail.sample.test")
       }.to raise_error(NoMethodError)
     end
   end
@@ -43,13 +43,13 @@ RSpec.describe Matchd::Response::MX do
   context "with resource_options" do
     include_examples "response resource_options",
       "preference" => 10,
-      "host" => "mail.sample.dev"
+      "host" => "mail.sample.test"
   end
 
   # TODO: Move this into the "validate" step
   [
     { "preference" => 10, "host" => nil },
-    { "preference" => nil, "host" => "mail.sample.dev" }
+    { "preference" => nil, "host" => "mail.sample.test" }
   ].each do |opts|
     context "invalid: #{opts.inspect}", skip: "waiting for better response validations" do
       subject { described_class.new(opts) }

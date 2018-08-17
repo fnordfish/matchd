@@ -1,8 +1,8 @@
 RSpec.describe Matchd::Rule do
   describe "parse_match" do
     {
-      '/(^\w+\.)*mydomain\.dev$/' => /(^\w+\.)*mydomain\.dev$/,
-      '/(^\w+\.)*mydomain\.dev$/i' => /(^\w+\.)*mydomain\.dev$/i,
+      '/(^\w+\.)*mydomain\.test$/' => /(^\w+\.)*mydomain\.test$/,
+      '/(^\w+\.)*mydomain\.test$/i' => /(^\w+\.)*mydomain\.test$/i,
       %q{/\A
           [[:digit:]]+ # 1 or more digits before the decimal point
           (\.          # Decimal point
@@ -37,7 +37,7 @@ RSpec.describe Matchd::Rule do
     end
 
     specify "Regexp input returns input" do
-      input = /(^\w+\.)*mydomain\.dev$/
+      input = /(^\w+\.)*mydomain\.test$/
       parsed = described_class.parse_match(input)
 
       expect(parsed).to be_a(Regexp)
@@ -93,7 +93,7 @@ RSpec.describe Matchd::Rule do
 
     let(:server) { instance_double(Matchd::Server) }
     let(:transaction) { instance_double(Async::DNS::Transaction) }
-    let(:query_name) { "test.dev." }
+    let(:query_name) { "test.test." }
     let(:query_ressource) { Resolv::DNS::Resource::IN::A }
 
     describe "matches" do

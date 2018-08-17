@@ -19,7 +19,7 @@ RSpec.describe Matchd::Response::SRV do
           "weight" => 0,
           "port" => 5269,
           # To make this meaningful, we need to provide a name:
-          "name" => "_xmpp-server._tcp.sample.dev"
+          "name" => "_xmpp-server._tcp.sample.test"
         ).
         call(transaction)
     end
@@ -35,7 +35,7 @@ RSpec.describe Matchd::Response::SRV do
             weight: 0,
             port: 5269,
             # To make this meaningful, we need to provide a name:
-            name: "_xmpp-server._tcp.sample.dev"
+            name: "_xmpp-server._tcp.sample.test"
           )
       }.to raise_error(KeyError)
     end
@@ -48,6 +48,6 @@ RSpec.describe Matchd::Response::SRV do
       "weight" => 0,
       "port" => 5269,
       # To make this meaningful, we need to provide a name:
-      "name" => "_xmpp-server._tcp.sample.dev"
+      "name" => "_xmpp-server._tcp.sample.test"
   end
 end

@@ -3,6 +3,7 @@ require "dry-configurable"
 
 module Matchd
   module Config
+    DEFAULT_PORT = 15353
     DEFAULT_DOT_DIR = File.join(ENV["HOME"], ".matchd")
     DEFAULT_CONFIG_FILE = File.join(DEFAULT_DOT_DIR, "config.yml")
 
@@ -15,8 +16,8 @@ module Matchd
     setting(
       :listen,
       [
-        { "protocol" => "udp", "ip" => "127.0.0.1", "port" => 15353 },
-        { "protocol" => "udp", "ip" => "::1",       "port" => 15353 }
+        { "protocol" => "udp", "ip" => "127.0.0.1", "port" => DEFAULT_PORT },
+        { "protocol" => "udp", "ip" => "::1",       "port" => DEFAULT_PORT }
       ],
       reader: true
     )

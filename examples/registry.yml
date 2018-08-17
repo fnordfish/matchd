@@ -2,29 +2,29 @@
 version: 1
 rules:
 #   # exact match:
-#   - match: mydomain.dev
+#   - match: mydomain.test
 #     resource_class: A
 #     respond: "10.0.0.80"
 #
 #   # using ruby regular expressions to match any sub-domains
-#   - match: /^(\w+\.)*mydomain\.dev$/
+#   - match: /^(\w+\.)*mydomain\.test$/
 #     resource_class: A
 #     respond: "10.0.0.80"
 #
 #   # IPv6 records
-#   - match: /^(\w+\.)*mydomain\.dev$/
+#   - match: /^(\w+\.)*mydomain\.test$/
 #     resource_class: AAAA
 #     respond: "fe80::A:0:0:0050"
 #
 #   # MX records
-#   - match: mydomain.dev
+#   - match: mydomain.test
 #     resource_class: MX
 #     respond:
 #       preference: 10
-#       host: 'mail.mydomain.dev.'
+#       host: 'mail.mydomain.test.'
 #
-#   - match: mydomain.dev
+#   - match: mydomain.test
 #     resource_class: NS
 #     respond:
-#       - host: 'ns1.mydomain.dev.'
-#       - host: 'ns2.mydomain.dev.'
+#       - host: 'ns1.mydomain.test.'
+#       - host: 'ns2.mydomain.test.'

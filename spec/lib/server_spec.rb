@@ -5,7 +5,7 @@ RSpec.describe Matchd::Server do
 
   let(:registry) { instance_double(Matchd::Registry) }
   let(:transaction) { instance_double(Async::DNS::Transaction) }
-  let(:query_name) { "test.dev." }
+  let(:query_name) { "test.test." }
   let(:query_ressource) { Resolv::DNS::Resource::IN::A }
 
   describe "default fallback" do

@@ -4,7 +4,7 @@ RSpec.describe Matchd::Response::PTR do
   let(:transaction) { instance_double(Async::DNS::Transaction) }
 
   describe "call" do
-    let(:ptr_host) { "host1.sample.dev" }
+    let(:ptr_host) { "host1.sample.test" }
 
     before do
       expect(transaction).to receive(:add).with(
@@ -27,7 +27,7 @@ RSpec.describe Matchd::Response::PTR do
   end
 
   context "with resource_options" do
-    include_examples "response resource_options", "host" => "host1.sample.dev"
+    include_examples "response resource_options", "host" => "host1.sample.test"
   end
 
   # TODO: Move this into the "validate" step

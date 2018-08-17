@@ -57,25 +57,37 @@ RSpec.describe Matchd::Glue::AsyncEndpoint do
       expect(described_class.parse([symbol_keys])).to eq([[:udp, "0.0.0.0", 53]])
     end
 
-    specify "missing data" do
-      [
-        { protocol: :udp, ip: "0.0.0.0", port: nil },
-        { protocol: :udp, ip: nil,       port: 53 },
-        { protocol: :udp, ip: nil,       port: nil },
-        { protocol: nil,  ip: "0.0.0.0", port: 53 },
-        { protocol: nil,  ip: "0.0.0.0", port: nil },
-        { protocol: nil,  ip: nil,       port: 53 },
-        { protocol: nil,  ip: nil,       port: nil },
-
-        { protocol: :udp, ip: "0.0.0.0" },
-        { protocol: :udp, port: 53 },
-        { protocol: :udp,                        },
-        {                ip: "0.0.0.0", port: 53 },
-        {                ip: "0.0.0.0", },
-        { port: 53 },
-        {},
-      ].each { |data| expect(described_class.parse(data)).to eq(nil) }
+    [
+      { protocol: :udp, ip: "0.0.0.0", port: nil },
+      { protocol: :udp, ip: "0.0.0.0" }
+    ].each do |data|
+      specify "missing port gets replaced with default" do
+        expect(described_class.parse(data)).to eq([[:udp, "0.0.0.0", 53]])
+      end
     end
+
+    [
+
+      { protocol: :udp, ip: nil,       port: 53 },
+      { protocol: :udp, ip: nil,       port: nil },
+      { protocol: nil,  ip: "0.0.0.0", port: 53 },
+      { protocol: nil,  ip: "0.0.0.0", port: nil },
+      { protocol: nil,  ip: nil,       port: 53 },
+      { protocol: nil,  ip: nil,       port: nil },
+
+
+      { protocol: :udp, port: 53 },
+      { protocol: :udp,                        },
+      {                ip: "0.0.0.0", port: 53 },
+      {                ip: "0.0.0.0", },
+      { port: 53 },
+      {},
+    ].each do |data|
+      specify "invalid missing data: #{data.inspect}" do
+        expect(described_class.parse(data)).to eq(nil)
+      end
+    end
+
   end
 
   describe "URI string" do
@@ -93,6 +105,12 @@ RSpec.describe Matchd::Glue::AsyncEndpoint do
 
     specify do
       expect(described_class.parse(["udp://0.0.0.0:53", "tcp://0.0.0.0:53"])).to eq(
+        [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
+      )
+    end
+
+    specify "missing port gets replaced with default" do
+      expect(described_class.parse(["udp://0.0.0.0", "tcp://0.0.0.0"])).to eq(
         [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
       )
     end

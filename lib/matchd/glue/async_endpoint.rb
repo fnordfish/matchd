@@ -38,19 +38,25 @@ module Matchd::Glue
         val.empty? ? nil : val
       end
 
+      # Supported DNS protocols
+      PROTOCOLS = %w(udp tcp).freeze
+
+      # Default port used when the port is omitted in Hash or String notation.
+      DEFAULT_PORT = 53
+
       private
 
       # @private
       # parses the classic triplet array notation
       # `[:udp, "0.0.0.0", 53]`
-      # and returns just the thing if all data is present
+      # and returns just the thing if all data is present.
+      # To ensure proper triplet detection, all values are required. No port default.
       def parse_array(args)
-        args = args.compact
-        if args.length == 3 && %w(udp tcp).include?(args[0].to_s)
-          args = args.clone
-          args[0] = args[0].to_sym
-          args
-        end
+        protocol, ip, port = args
+
+        return nil unless PROTOCOLS.include?(protocol.to_s) && ip && port
+
+        [protocol.to_sym, ip, port]
       end
 
       # @private
@@ -62,9 +68,9 @@ module Matchd::Glue
       def parse_hash(args)
         protocol = args["protocol"] || args[:protocol]
         ip       = args["ip"]       || args[:ip]
-        port     = args["port"]     || args[:port]
+        port     = args["port"]     || args[:port] || DEFAULT_PORT
 
-        return nil unless protocol && ip && port
+        return nil unless PROTOCOLS.include?(protocol.to_s) && ip
 
         [protocol.to_sym, ip, port]
       end
@@ -74,13 +80,13 @@ module Matchd::Glue
       # `"udp://0.0.0.0:53"` or `"tcp://0.0.0.0:53"`
       def parse_uri(args)
         uri = URI.parse(args)
-        protocol = uri.scheme.to_sym
+        protocol = uri.scheme
         ip       = uri.host
-        port     = uri.port
+        port     = uri.port || DEFAULT_PORT
 
-        return nil unless protocol && ip && port
+        return nil unless PROTOCOLS.include?(protocol.to_s) && ip
 
-        [protocol, ip, port]
+        [protocol.to_sym, ip, port]
       end
     end
   end

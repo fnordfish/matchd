@@ -464,3 +464,10 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/fnordf
 This software is distributed under the Mozilla Public License Version 2.0
 
 A copy of the license text can be found in this repository under `License.txt` or at http://mozilla.org/MPL/2.0/
+
+### Previous Work
+
+This software is based on the ideas of:
+
+- [vagrant-dns](https://github.com/BerlinVagrant/vagrant-dns), created by Florian Gilcher and released under the MIT License
+- [rubydns](https://github.com/socketry/rubydns), created by Samuel Williams and released under the MIT License.

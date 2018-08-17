@@ -7,7 +7,9 @@ class Matchd::Rule::Respond < Matchd::Rule
   attr_reader :responses
 
   def visit!(_server, _name, _resource_class, transaction)
-    Matchd.Response(responses, match_resource_classes).each do |resp|
+    # Using the original Rule's resource_classes definition as a fallback, if
+    # the response doesn't configure one.
+    Matchd.Response(responses, @resource_classes).each do |resp|
       resp.call(transaction)
     end
   end

@@ -35,9 +35,13 @@ Like it's example [`RubyDNS`](https://github.com/socketry/rubydns), it uses a pa
     - [append](#append)
     - [passthrough](#passthrough)
     - [fail](#fail)
+  - [Using as a local Dev DNS](#using-as-a-local-dev-dns)
+    - [macOS / resolver](#macos--resolver)
   - [Using as a library](#using-as-a-library)
   - [Development](#development)
   - [Contributing](#contributing)
+  - [License](#license)
+    - [Previous Work](#previous-work)
 
 ## Installation
 
@@ -49,6 +53,12 @@ Although it's probably possible to use as a public/private DNS, Matchd is intend
 
 - large list of sub-domains (use regular expressions to match them all)
 - DNS record types like TXT, MX, SRV etc. for integration testing or development
+
+The idea is to use a globally non-route-able top level domain like `.test` and configure your local system in a way, that it will use Matchd as a resolver for such domains.
+
+You can use Matchd to hook into global top level domain such as `.com` if you wish, and Matchd will forward everything it can't match to an upstream resolver. But keep in mind that doing so can have unexpected or even catastrophic results when expediently matching a domain you actually need for work.
+
+Please refer to the section "[Using as a local Dev DNS](#using-as-a-local-dev-dns)" on how to make your system use Matchd as a resolver.
 
 ## Usage
 
@@ -142,19 +152,19 @@ When no rule matches, the query will be forwarded to the configured resolvers (s
 To match against a specific name use the string notation.
 
 ```yaml
-# This will only match where the requested domain is exactly `mydomain.dev`, sub-domains like `sub.mydomain.dev` will not match.
-match: mydomain.dev
+# This will only match where the requested domain is exactly `mydomain.test`, sub-domains like `sub.mydomain.test` will not match.
+match: mydomain.test
 ```
 
 To match all sub-domains, use a regular expression.
 
 ```yaml
-# This will only match sub-domain queries like `sub.mydomain.dev` or `bus.mydomain.dev`, but not `mydomain.de`
-match: /^\w+\.mydomain\.dev$/
-# This will only match sub-domain queries like `sub.mydomain.dev` or `bus.mydomain.dev`, and also `mydomain.de`
-match: /(^\w+\.)?mydomain\.dev$/
-# This will also match any depth of sub-domain queries like `bus.sub.mydomain.dev`:
-match: /(^\w+\.)*mydomain\.dev$/
+# This will only match sub-domain queries like `sub.mydomain.test` or `bus.mydomain.test`, but not `mydomain.de`
+match: /^\w+\.mydomain\.test$/
+# This will only match sub-domain queries like `sub.mydomain.test` or `bus.mydomain.test`, and also `mydomain.de`
+match: /(^\w+\.)?mydomain\.test$/
+# This will also match any depth of sub-domain queries like `bus.sub.mydomain.test`:
+match: /(^\w+\.)*mydomain\.test$/
 ```
 
 Under the hood, Matchd uses [ruby regular expressions](https://ruby-doc.org/core-2.5.1/Regexp.html).
@@ -191,7 +201,7 @@ You can configure multiple responses per rule. Each rule has it's own configurat
 
 ```yaml
 ttl: 86400                # The Time-To-Live of the record (default: 86400 seconds == 24h)
-name: "other.sample.dev." # The absolute DNS name (needs to end with a dot). Default is the question name.
+name: "other.sample.test." # The absolute DNS name (needs to end with a dot). Default is the question name.
 section: answer           # The answer section. One of "answer", "additional", "authority" (default: "answer")
 ```
 
@@ -206,12 +216,12 @@ Example:
 One single value response:
 
 ```yaml
-- match: sample.dev
+- match: sample.test
   resource_class: A
   respond: 10.0.0.1
 
 # is the same as:
-- match: sample.dev
+- match: sample.test
   resource_class: A
   respond:
   - resource_class: A
@@ -221,20 +231,20 @@ One single value response:
 Multiple single value responses:
 
 ```yaml
-- match: sample.dev
+- match: sample.test
   resource_class: NS
   respond:
-  - 'ns1.sample.dev.'
-  - 'ns2.sample.dev.'
+  - 'ns1.sample.test.'
+  - 'ns2.sample.test.'
 
 # is the same as:
-- match: sample.dev
+- match: sample.test
   resource_class: NS
   respond:
   - resource_class: NS
-    host: 'ns1.sample.dev.'
+    host: 'ns1.sample.test.'
   - resource_class: NS
-    host: 'ns2.sample.dev.'
+    host: 'ns2.sample.test.'
 ```
 
 #### `A`
@@ -255,7 +265,7 @@ ip: "::1"
 
 ```yaml
 resource_class: CNAME
-alias: "sample.dev"
+alias: "sample.test"
 ```
 
 #### `MX`
@@ -263,29 +273,29 @@ alias: "sample.dev"
 ```yaml
 resource_class: MX
 preference: 10
-host: "mail.sample.dev"
+host: "mail.sample.test"
 ```
 
 #### `NS`
 
 ```yaml
 resource_class: NS
-host: "ns1.sample.dev"
+host: "ns1.sample.test"
 ```
 
 #### `PTR`
 
 ```yaml
 resource_class: PTR
-host: "host1.sample.dev"
+host: "host1.sample.test"
 ```
 
 #### `SOA`
 
 ```yaml
 resource_class: SOA
-mname: "ns1.sample.dev."       # master zone name
-rname: "admin.sample.dev."     # Responsible Name
+mname: "ns1.sample.test."       # master zone name
+rname: "admin.sample.test."     # Responsible Name
 serial: "1533038712"           # Serial Number
 refresh: 1200                  # Refresh Time
 retry: 900                     # Retry Time
@@ -302,7 +312,7 @@ priority: 10
 weight: 0
 port: 5269
 # To make this meaningful, we need to provide a name:
-name: "_xmpp-server._tcp.sample.dev"
+name: "_xmpp-server._tcp.sample.test"
 ```
 
 #### `TXT`
@@ -328,7 +338,7 @@ Append rules accept the same common options as Respond rules. The Response rules
 ```yaml
 append_question:
   ttl: 86400                # The Time-To-Live of the record (default: 86400 seconds == 24h)
-  name: "other.sample.dev." # The absolute DNS name (needs to end with a dot). Default is the question name.
+  name: "other.sample.test." # The absolute DNS name (needs to end with a dot). Default is the question name.
   section: answer           # The answer section. One of "answer", "additional", "authority" (default: "answer")
   resource_class:
     - A
@@ -338,7 +348,7 @@ append_question:
 Example:
 
 ```yaml
-- match: dev.sample.dev
+- match: dev.sample.test
   resource_class: ANY
   append_question:
     ttl: 86400
@@ -401,15 +411,36 @@ Note that the above values are all case __sensitive__!
 Example:
 
 ```yaml
-- match: not-there.sample.dev
+- match: not-there.sample.test
   resource_class: A
   fail: NXDomain
 
 # a catchall rule:
-- match: /^(\w+\.)?sample.dev$/
+- match: /^(\w+\.)?sample.test$/
   resource_class: A
   respond: "127.0.0.1"
 ```
+
+## Using as a local Dev DNS
+
+When using Matchd as a local dns server for development purposes, it's recommended to:
+
+1. use non-route-able top level domains, such as `.test`
+2. use a non-privileged port (usually < 1024), such as 15353 (the default)
+
+### macOS / resolver
+
+Create a file under `/etc/resolver/` which is named like the top level domain you'd like to specify a different resolver (Matchd) for.
+
+```bash
+cat <<EOF | sudo tee /etc/resolver/test
+nameserver 127.0.0.1
+nameserver ::1
+port 15353
+EOF
+```
+
+
 
 ## Using as a library
 

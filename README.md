@@ -4,12 +4,11 @@ Matchd is a DNS server which can be configured via YAML files.
 
 Like it's example [`RubyDNS`](https://github.com/socketry/rubydns), it uses a pattern matching rule model  but does not require you to write any ruby.
 
-**This is work in progress and not yet released. I will break things all the time.**
-
 [![Build Status](https://travis-ci.org/fnordfish/matchd.svg?branch=master)](https://travis-ci.org/fnordfish/matchd)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9791617021f321155cb0/maintainability)](https://codeclimate.com/github/fnordfish/matchd/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9791617021f321155cb0/test_coverage)](https://codeclimate.com/github/fnordfish/matchd/test_coverage)
 [![Inline docs](https://inch-ci.org/github/fnordfish/matchd.svg?branch=master)](http://inch-ci.org/github/fnordfish/matchd)
+[![Gem Version](https://badge.fury.io/rb/matchd.svg)](https://badge.fury.io/rb/matchd)
 
 ## Table of Contents
 

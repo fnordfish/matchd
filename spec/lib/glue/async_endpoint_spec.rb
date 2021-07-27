@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Glue::AsyncEndpoint do
   describe "classic array triplet" do
     let(:single) { [:udp, "0.0.0.0", 53] }
@@ -75,7 +77,6 @@ RSpec.describe Matchd::Glue::AsyncEndpoint do
       { protocol: nil,  ip: nil,       port: 53 },
       { protocol: nil,  ip: nil,       port: nil },
 
-
       { protocol: :udp, port: 53 },
       { protocol: :udp,                        },
       {                ip: "0.0.0.0", port: 53 },
@@ -87,7 +88,6 @@ RSpec.describe Matchd::Glue::AsyncEndpoint do
         expect(described_class.parse(data)).to eq(nil)
       end
     end
-
   end
 
   describe "URI string" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "time"
 
 class Matchd::Response::SOA < Matchd::Response

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Matchd
   class Response
     autoload :A,     "matchd/response/a"

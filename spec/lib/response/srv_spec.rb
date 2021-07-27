@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "response_helper"
 
 RSpec.describe Matchd::Response::SRV do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Matchd::Response::A < Matchd::Response
   def initialize(opts)
     super

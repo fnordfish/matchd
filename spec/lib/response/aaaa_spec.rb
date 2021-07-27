@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "response_helper"
 
 RSpec.describe Matchd::Response::AAAA do
@@ -34,6 +36,7 @@ RSpec.describe Matchd::Response::AAAA do
   ["not-an-ip", "", nil, "1.2.3.4"].each do |ip|
     context "invalid: #{ip.inspect}" do
       subject { described_class.new(ip) }
+
       it "raises an error when called" do
         expect { subject.call(transaction) }.to raise_error(ArgumentError)
       end

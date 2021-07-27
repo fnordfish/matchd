@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Matchd::CLI
   # A little patch to allow a "class_option" for letting Matchd be configured
   # using the given or default config file

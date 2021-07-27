@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Matchd::Rule::Respond < Matchd::Rule
   def initialize(options)
     super

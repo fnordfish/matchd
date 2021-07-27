@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Matchd
   module Helpers
     module_function

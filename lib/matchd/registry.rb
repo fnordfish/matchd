@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "yaml"
 
 module Matchd
@@ -11,6 +13,7 @@ module Matchd
 
     class ParseError < RuntimeError
       def initialize(registry_file = nil)
+        super()
         @registry_file = registry_file
       end
 
@@ -23,6 +26,7 @@ module Matchd
 
     def initialize(rules)
       raise ArgumentError unless rules.is_a?(Enumerable)
+
       @rules = rules
     end
 
@@ -56,7 +60,7 @@ module Matchd
     end
 
     def each(&block)
-      rules.each(&block) if rules
+      rules&.each(&block)
     end
 
     def valid?

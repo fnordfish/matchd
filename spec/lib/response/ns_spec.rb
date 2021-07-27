@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "response_helper"
 
 RSpec.describe Matchd::Response::NS do
@@ -34,6 +36,7 @@ RSpec.describe Matchd::Response::NS do
   [nil].each do |ns_host|
     context "invalid: #{ns_host.inspect}" do
       subject { described_class.new(ns_host) }
+
       it "raises an error when called" do
         expect { subject.call(transaction) }.to raise_error(ArgumentError)
       end

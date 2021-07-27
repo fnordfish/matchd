@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Matchd
   # Wrappers for dealing with other lib's data structures
   module Glue

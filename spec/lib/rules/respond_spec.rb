@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Rule::Respond do
   subject { described_class.new(rule) }
 

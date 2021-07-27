@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Server do
   subject do
     described_class.new(registry, [[:udp, "127.0.0.1", 63333]])

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "response_helper"
 
 RSpec.describe Matchd::Response::TXT do
@@ -34,6 +36,7 @@ RSpec.describe Matchd::Response::TXT do
   [nil].each do |txt|
     context "invalid: #{txt.inspect}", skip: "waiting for better response validations" do
       subject { described_class.new(txt) }
+
       it "raises an error when called" do
         expect { subject.call(transaction) }.to raise_error(ArgumentError)
       end

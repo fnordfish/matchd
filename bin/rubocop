@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler"
+require "bundler/inline"
+
+Bundler.settings.temporary(frozen: false, deployment: false) do
+  gemfile do
+    source "https://rubygems.org"
+    platform "ruby" do
+      gem 'rubocop', '1.18.4'
+      gem 'rubocop-rake', '0.6.0'
+      gem 'rubocop-rspec', '2.4.0'
+    end
+  end
+end
+load Gem.bin_path("rubocop", "rubocop")

@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Registry do
   describe "single file" do
-    let(:registry_file) { fixture_path "test_dns_1.yml" }
-
     subject { described_class.load_file(registry_file) }
 
+    let(:registry_file) { fixture_path "test_dns_1.yml" }
     let(:expected) do
       [
         {
@@ -94,8 +95,8 @@ RSpec.describe Matchd::Registry do
 
   shared_examples "valid rule data" do |parsed_data|
     let(:registry) { described_class.load(parsed_data) }
-    it { expect { registry }.to_not raise_error }
-    it { expect(registry.to_a).to_not include a_kind_of(Matchd::Rule::Invalid) }
+    it { expect { registry }.not_to raise_error }
+    it { expect(registry.to_a).not_to include a_kind_of(Matchd::Rule::Invalid) }
     it { expect(registry).to be_valid }
   end
 
@@ -117,9 +118,9 @@ RSpec.describe Matchd::Registry do
 
   shared_examples "invalid rule data" do |parsed_data|
     let(:registry) { described_class.load(parsed_data) }
-    it { expect { registry }.to_not raise_error }
+    it { expect { registry }.not_to raise_error }
     it { expect(registry.first).to be_a(Matchd::Rule::Invalid) }
-    it { expect(registry).to_not be_valid }
+    it { expect(registry).not_to be_valid }
   end
 
   context "some string rule" do

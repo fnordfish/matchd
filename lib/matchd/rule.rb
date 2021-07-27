@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "resolv"
 
 module Matchd
@@ -8,7 +10,7 @@ module Matchd
     autoload :Passthrough, "matchd/rule/passthrough"
     autoload :Respond,     "matchd/rule/respond"
 
-    REGEXP_MATCHER = %r{\A/(.*)/([mix]*)\Z}m
+    REGEXP_MATCHER = %r{\A/(.*)/([mix]*)\Z}m.freeze
 
     REGEXP_OPTIONS = {
       "m" => Regexp::MULTILINE,
@@ -18,14 +20,10 @@ module Matchd
 
     # parses a Regexp lookalike String into Regexp or returns the String
     def self.parse_match(name)
-      if name.is_a?(Regexp)
-        name
-      elsif (r = name.match(REGEXP_MATCHER))
-        regexp_opts = r[2].each_char.reduce(0) { |o, c| o |= REGEXP_OPTIONS[c] } # rubocop:disable Lint/UselessAssignment # No, it's not!
-        Regexp.new(r[1], regexp_opts)
-      else
-        name
-      end
+      return name if name.is_a?(Regexp) || !(r = name.match(REGEXP_MATCHER))
+
+      regexp_opts = r[2].each_char.reduce(0) { |o, c| o | REGEXP_OPTIONS[c] }
+      Regexp.new(r[1], regexp_opts)
     end
 
     def self.parse_resource_class(resource_class)

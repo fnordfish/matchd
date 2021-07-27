@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # - match: /dev.mydomain.org/
 #   resource_class: ANY
 #   append_question:
@@ -6,18 +8,17 @@
 #     - MX
 #     - NS
 RSpec.describe Matchd::Rule::Append do
+  subject { described_class.new(options) }
+
   let(:options) do
     { "match" => //, "resource_class" => "ANY", "append_question" => append_question }
   end
-
-  let(:append_question) { %w(A CNAME MX NS) }
-
-  subject { described_class.new(options) }
-
   let(:server) { instance_double(Matchd::Server) }
   let(:name) { "example.test" }
   let(:resource_class) { Resolv::DNS::Resource::IN::ANY }
   let(:transaction) { instance_double(Async::DNS::Transaction, name: name) }
+
+  let(:append_question) { %w(A CNAME MX NS) }
 
   describe "#visit!" do
     context "without additional transaction options" do
@@ -41,8 +42,7 @@ RSpec.describe Matchd::Rule::Append do
             "ttl" => 3600,
             "name" => "www.example.com.",
             "section" => "additional"
-          }
-        }
+          } }
       end
 
       specify do

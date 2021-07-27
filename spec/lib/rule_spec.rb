@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Rule do
   describe "parse_match" do
     {
@@ -51,6 +53,7 @@ RSpec.describe Matchd::Rule do
     ["", nil, []].each do |rule_data|
       describe "empty rule: #{rule_data.inspect}" do
         let(:data) { rule_data }
+
         specify { expect(subject).to be_a(Matchd::Rule::Invalid) }
         specify { expect(subject.raw).to eq(data) }
       end
@@ -116,7 +119,7 @@ RSpec.describe Matchd::Rule do
       before { expect(subject).to receive(:matches?).and_return(false) }
 
       it "does not call visit! and returns false" do
-        expect(subject).to receive(:visit!).never
+        expect(subject).not_to receive(:visit!)
         expect(
           subject.call(server, query_name, query_ressource, transaction)
         ).to eq(false)

@@ -1,12 +1,23 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd do
   it "has a version number" do
     expect(Matchd::VERSION).not_to be nil
   end
 
   describe "configure" do
+    let(:config) { object_double(Matchd::Config.config) }
+
+    before do
+      allow(Matchd::Config).to receive(:configure).and_yield(config)
+    end
+
     it "forwards Matchd::Config" do
-      expect(Matchd::Config).to receive(:configure).and_yield(kind_of(Dry::Configurable::Config))
-      Matchd.configure { |config| }
+      expect(Matchd::Config).to receive(:configure).and_yield(config)
+      expect(config).to receive(:dot_dir=).with("~/.my-matchd")
+      described_class.configure { |config|
+        config.dot_dir = "~/.my-matchd"
+      }
     end
 
     [
@@ -14,12 +25,6 @@ RSpec.describe Matchd do
       "test_symbol_config.yml"
     ].each do |config_file|
       describe config_file do
-        let(:config) { object_double(Matchd::Config.config) }
-
-        before do
-          expect(Matchd::Config).to receive(:configure).and_yield(config)
-        end
-
         specify do
           expect(config).to receive(:dot_dir=).with("~/.matchd")
           expect(config).to receive(:listen=).with(
@@ -39,7 +44,7 @@ RSpec.describe Matchd do
           expect(config).to receive(:resolver=).with(["system", "tcp://1.1.1.1:53"])
           expect(config).to receive(:registry_file=).with("registry.yml")
 
-          Matchd.configure_from_file!(fixture_path(config_file))
+          described_class.configure_from_file!(fixture_path(config_file))
         end
       end
     end

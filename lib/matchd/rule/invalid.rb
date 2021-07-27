@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 # Placeholder class for marking keeping invalid Rules around for later
 # inspection.
 # It overwrited the entire public interface of {Matchd::Rule} to no-operations
 class Matchd::Rule::Invalid < Matchd::Rule
-  def initialize(options)
+  def initialize(options) # rubocop:disable Lint/MissingSuper
     @raw = options
   end
   attr_reader :raw

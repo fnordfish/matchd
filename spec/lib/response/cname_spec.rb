@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "response_helper"
 
 RSpec.describe Matchd::Response::CNAME do
@@ -34,6 +36,7 @@ RSpec.describe Matchd::Response::CNAME do
   [nil].each do |alias_name|
     context "invalid: #{alias_name.inspect}" do
       subject { described_class.new(alias_name) }
+
       it "raises an error when called" do
         expect { subject.call(transaction) }.to raise_error(ArgumentError)
       end

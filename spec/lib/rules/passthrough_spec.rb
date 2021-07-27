@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Matchd::Rule::Passthrough do
   subject { described_class.new(options.merge("passthrough" => resolver)) }
 
@@ -81,10 +83,10 @@ RSpec.describe Matchd::Rule::Passthrough do
     end
 
     context "parseable resolver config" do
+      subject { described_class.new(options.merge("passthrough" => resolver)) }
+
       let(:resolver) { ["udp://0.0.0.1:53", ["tcp", "0.0.0.2", 53]] }
       let(:passthrough_resolver) { instance_double(Async::DNS::Resolver) }
-
-      subject { described_class.new(options.merge("passthrough" => resolver)) }
 
       before do
         expect(Matchd::Glue::AsyncEndpoint).to receive(:parse).at_least(:once).and_call_original
@@ -112,6 +114,7 @@ RSpec.describe Matchd::Rule::Passthrough do
     end
 
     describe "logging" do
+      require "logger"
       let(:logger) { instance_double(Logger) }
       let(:resolver) { ["udp://1.1.1.1:53"] }
       let(:server) { instance_double(Matchd::Server, logger: logger) }

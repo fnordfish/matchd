@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Matchd::Glue
   # Wrapper for allowing a more flexible way of defining interfaces for Asyc-*
   module AsyncEndpoint

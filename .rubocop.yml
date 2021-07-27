@@ -1,10 +1,25 @@
 inherit_from:
-- https://relaxed.ruby.style/rubocop.yml
+  # - https://relaxed.ruby.style/rubocop.yml
+  - .rubocop-https---relaxed-ruby-style-rubocop-yml
+
+require:
+  - rubocop-rake
+  - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.5
+  NewCops: enable
+  # disable loaded extensions manually
+  # https://github.com/rubocop/rubocop/issues/9810
+  SuggestExtensions:
+    rubocop-rake: false
+    rubocop-rspec: false
   Exclude:
     - 'bin/*'
+
+Bundler/OrderedGems:
+  Enabled: false
+
 
 Metrics/BlockLength:
   Exclude:
@@ -16,5 +31,12 @@ Style/ClassAndModuleChildren:
 Style/NumericLiterals:
   Enabled: false
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/ArrayAlignment:
   EnforcedStyle: with_fixed_indentation

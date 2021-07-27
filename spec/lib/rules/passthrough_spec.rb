@@ -112,6 +112,7 @@ RSpec.describe Matchd::Rule::Passthrough do
     end
 
     describe "logging" do
+      require "logger"
       let(:logger) { instance_double(Logger) }
       let(:resolver) { ["udp://1.1.1.1:53"] }
       let(:server) { instance_double(Matchd::Server, logger: logger) }
